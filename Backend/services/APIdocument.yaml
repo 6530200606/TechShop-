@@ -1,0 +1,905 @@
+openapi: 3.0.0
+info:
+  title: TechShop API
+  description: TechShop Project from Kasetsart University Sriracha Campus.
+  version: 0.1
+servers:
+  - url: http://localhost:3000/
+
+paths:
+  /products:
+    get:
+      summary: Returns a list all of products.
+      description: |
+        List all products in array of object format.<br>
+        Each product contains details like product name, price, etc.
+      responses:
+        '200':
+          description: A JSON array of Products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/products' 
+        '500':
+          description: Server error.
+    post:
+      summary: เพิ่มสินค้าใหม่
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/new_product'
+      responses:
+        '200':
+          description: เพิ่มสินค้าเรียบร้อยแล้ว
+        '409':
+          description: เกิดข้อผิดพลาดในการเพิ่มสินค้า
+  /products/{id}:
+    get:
+      summary: ดึงข้อมูล Product ตาม id
+      description: |
+        Show a products in array of object format
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Product ID
+          schema:
+            type : string
+      responses:
+        '200':
+          description: A JSON array of Products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/products'
+        '404':
+          description: Product not Found
+        '500':
+          description: Server error.  
+    put:
+      summary: อัปเดตข้อมูล Product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Product ID
+          schema:
+            type : string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_products'
+      responses:
+        '201':
+          description: แก้ไขข้อมูลเสร็จสิ้น
+        '500':
+          description: แก้ไขข้อมูลผิดพลาด  
+  /products/decreaseProduct/{id}:
+    put:
+      summary: ลดจำนวนสินค้า
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Cart Id
+          schema:
+            type : string
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: An error occurred
+  /products/search/{id}:
+    get:
+      summary: ค้นหา Product ตามคำค้นที่ผู้ใช้ป้อน
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Product ID, Product Name, Product Type, Brand Name
+          schema:
+            type : string
+      responses:
+        '200':
+          description: A JSON array of Products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/products'
+        '404':
+          description: Product not Found
+        '500':
+          description: Server error.  
+  /products/brands/{id}:
+    get:
+      summary: ดึงข้อมูล Product ทั้งหมดที่ตรงกับ Brands
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: brand ID
+          schema:
+            type : string
+      responses:
+        '200':
+          description: A JSON array of Products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/products'
+        '404':
+          description: Product not Found
+        '500':
+          description: Server error.  
+  /products/types/{id}:
+    get:
+      summary: ดึงข้อมูล Product ทั้งหมดที่ตรงกับ Type Id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: type ID
+          schema:
+            type : string
+      responses:
+        '200':
+          description: A JSON array of Products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/products'
+        '404':
+          description: Product not Found
+        '500':
+          description: Server error. 
+
+  /carts/addCart:
+    post:
+      summary: สร้างตะกร้าใหม่
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/members'
+      responses:
+        '200':
+          description: เพิ่มตะกร้าสำเร็จ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/carts'
+        '500':
+          description: Error in postCart
+  /carts/addcartdtl:
+    post:
+      summary: อัปเดตสินค้าที่มีอยู่ในตะกร้า
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/carts'
+      responses:
+        '200':
+          description: Updated existing product quantity in cart
+        '500':
+          description: Error processing request
+  /carts/getCart/{id}:
+    get:
+      summary: ดึงข้อมูลตะกร้าสินค้า
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Cart ID
+          schema:
+            type : string
+      responses:
+        '200':
+          description: ข้อมูลตะกร้า
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/carts'
+        '500':
+          description: Error in getCart
+  /carts/getCartId/{id}:
+    get:
+      summary: ดึง cartId ของตะกร้าสินค้า
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: cusId
+          schema:
+            type : string
+      responses:
+        '200':
+          description: ข้อมูลตะกร้า
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/carts'
+        '500':
+          description: ไม่มีสินค้าในตะกร้า
+  /carts/getcartdtl/{id}:
+    get:
+      summary: อัปเดตสินค้าในตะกร้า
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Cart Id
+          schema:
+            type : string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/carts_dtl'
+      responses:
+        '200':
+          description: เพิ่มสินค้าลงตะกร้าเรียบร้อยแล้ว
+        '500':
+          description: Error processing request
+  /carts/updateCartDtl:
+    put:
+      summary: อัปเดตรายละเอียดสินค้าในตะกร้า
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/carts_dtl'
+      responses:
+        '201':
+          description: อัปเดตตะกร้าเสร็จสิน
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/carts_dtl'
+        '500':
+          description: Server Error
+  /carts/deleteCartDtl:
+    delete:
+      summary: ลบสินค้าจากรายละเอียดตะกร้าสินค้า
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/carts_dtl'
+      responses:
+        '204':
+          description: end
+        '500':
+          description: Error
+  /carts/clearCart:
+    delete:
+      summary: ลบสินค้าทั้งหมดในตะกร้า
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/carts_dtl'
+      responses:
+        '204':
+          description: end
+        '500':
+          description: Error
+
+  /members/getss:
+    get:
+      summary: ข้อมูลเซสชันของผู้ใช้
+      responses:
+        '200':
+          description: session
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/mem_getss' 
+        '500':
+          description: Server Error
+  /members/getMember/{id}:
+    get:
+      summary: ดึงข้อมูลสมาชิก
+      description: |
+        ดึงข้อมูลของสมาชิกจากฐานข้อมูลโดยใช้อีเมลเป็นหลัก
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: E-mail
+          schema:
+            type : string
+      responses:
+        '200':
+          description: A JSON array of members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/members'
+        '404':
+          description: ไม่พบที่อยู่สำหรับอีเมลนี้
+        '500':
+          description: เกิดข้อผิดพลาดในการดึงข้อมูล
+  /members/logout:
+    get:
+      summary: ออกจากระบบ
+      description: |
+        ใช้สำหรับการยกเลิกการใช้งานเซสชันและลบคุกกี้ที่เกี่ยวข้องกับเซสชันของผู้ใช้
+      responses:
+        '200':
+          description: ออกจากระบบเสร็จสิ้น
+        '500':
+          description: เกิดข้อผิดพลาดในการออกจากระบบ กรุณาลองใหม่
+  /members/login:
+    post:
+      summary: เข้าสู่ระบบ
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginMember'
+      responses:
+        '200':
+          description: เข้าสู่ระบบสำเร็จ
+        '500':
+          description: เข้าสู่ระบบไม่สำเร็จ
+  /members:
+    post:
+      summary: ลงทะเบียนสมาชิกใหม่
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/members'
+      responses:
+        '200':
+          description: ลงทะเบียนสำเร็จ
+        '500':
+          description: ลงทะเบียนไม่สำเร็จ
+  /members/update:
+    put:
+      summary: อับเดตข้อมูลสมาชิก
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/members'
+      responses:
+        '201':
+          description: บันทึกข้อมูลสำเร็จ
+        '400':
+          description: เบอร์โทรนี้ถูกใช้งานแล้ว
+        '500':
+          description: Server error
+
+  /orders/getOrder:
+    get:
+      summary: ดึงข้อมูลคำสั่งซื้อ
+      responses:
+        '200':
+          description: A JSON array of order
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/orders' 
+        '404':
+          description: Order not Found
+        '500':
+          description: Error fetching orders
+  /orders/getOrderById/{id}:
+    get:
+      summary: ดึงข้อมูลคำสั่งซื้อ
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: cusId
+          schema:
+            type : string
+      responses:
+        '200':
+          description: A JSON array of order
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/orders' 
+        '500':
+          description: Error fetching orders
+  /orders/getOrderDtl/{id}:
+    get:
+      summary: ดึงรายละเอียดของคำสั่งซื้อ
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: orderId
+          schema:
+            type : string
+      responses:
+        '200':
+          description: A JSON array of order
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/orders' 
+        '404':
+          description: OrderDtl not Found
+        '500':
+          description: Server error 
+  /orders/getProductDtl/{id}:
+    get:
+      summary: ดึงรายละเอียดของ Product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: orderId
+          schema:
+            type : string
+      responses:
+        '200':
+          description: A JSON array of order
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/orders' 
+        '500':
+          description: Server error 
+  /orders/addOrder:
+    post:
+      summary: สร้างคำสั่งซื้อใหม่
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/orders'
+      responses:
+        '200':
+          description: Add Order Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/add_orders' 
+        '500':
+          description: Server error 
+  /orders/addorderdtl:
+    post:
+      summary: สร้างรายละเอียดคำสั่งซื้อใหม่
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_orders_dtl'
+      responses:
+        '200':
+          description: Order details added successfully
+        '500':
+          description: An error occurred
+  /orders/updateShipStatus:
+    put:
+      summary: อัปเดตสถานะการจัดส่งของคำสั่งซื้อ
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_shipStatus'
+      responses:
+        '200':
+          description: บันทึกข้อมูลสำเร็จ
+        '500':
+          description: Server Error
+
+  /admins:
+    get:
+      summary: ดึงข้อมูลของพนักงาน
+      responses:
+        '200':
+          description: ข้อมูลของพนักงาน
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admins'
+        '500':
+          description: Server Error
+    post:
+      summary: ลงทะเบียนพนักงาน
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_admin'
+      responses:
+        '200':
+          description: ลงทะเบียนผู้ใช้ระบบสำเร็จ
+        'email duplicate':
+          description: อีเมลนี้ถูกใช้งานแล้ว
+        'phone duplicate':
+          description: เบอร์โทรนี้ถูกใช้งานแล้ว
+        'null':
+          description: กรุณากรอกข้อมูลให้ครบถ้วน
+        'error':
+          description: ลงทะเบียนไม่สำเร็จ
+  /admins/getss:
+    get:
+      summary: ดึงข้อมูล session ของพนักงาน
+      responses:
+        '200':
+          description: ข้อมูลของพนักงาน
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin_getss'
+  /admins/logout:
+    get:
+      summary: ออกจากระบบสำหรับพนักงาน
+      responses:
+        '200':
+          description: ออกจากระบบเสร็จสิ้น
+        '500':
+          description: เกิดข้อผิดพลาดในการออกจากระบบ กรุณาลองใหม่
+  /admins/getAdmin/{id}:
+    get:
+      summary: ดึงข้อมูลขของพนักงานโดยอิงจากอีเมล
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: adminEmail
+          schema:
+            type : string
+      responses:
+        '200':
+          description: ข้อมูลของพนักงาน
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admins'
+        '404':
+          description: ไม่พบที่อยู่สำหรับอีเมลนี้
+        '500':
+          description: เกิดข้อผิดพลาดในการดึงข้อมูล
+  /admins/login:
+    post:
+      summary: การเข้าสู่ระบบของพนักงาน
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/login_admins'
+      responses:
+        '200':
+          description: เข้าสู่ระบบสำเร็จ
+        '404':
+          description: อีเมลไม่ถูกต้อง กรุณาลองใหม่
+        '500':
+          description: เข้าสู่ระบบไม่สำเร็จ
+  /admins/update:
+    put:
+      summary: อัปเดตข้อมูลพนักงาน
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admins'
+      responses:
+        '201':
+          description: บันทึกข้อมูลสำเร็จ
+        '500':
+          description: Server Error
+
+  /brands:
+    get:
+      summary: ดึงข้อมูลทั้งหมดของแบรนด์
+      responses:
+        '201':
+          description: บันทึกข้อมูลสำเร็จ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/brands'
+        '500':
+          description: Server Error
+
+  /types:
+    get:
+      summary: ดึงข้อมูลประเภทของฮาร์ดแวร์
+      responses:
+        '200':
+          description: บันทึกข้อมูลสำเร็จ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/types'
+        '500':
+          description: Server Error
+
+components:
+  schemas:
+    products:
+      type: object
+      properties:
+        pdId:
+          type: string
+        pdName:
+          type: string
+        pdPrice:
+          type: number
+        brandId:
+          type: string
+        TypeId:
+          type: string
+        stock:
+          type: number
+        warranty:
+          type: number
+        image:
+          type: url
+        pdDescribe:
+          type: string
+        delStatus:
+          type: boolean
+        brand:
+          $ref: '#/components/schemas/brands'
+        type:
+          $ref: '#/components/schemas/types'
+    update_products:
+      type: object
+      properties:
+        pdName:
+          type: string
+        pdPrice:
+          type: number
+        brandId:
+          type: string
+        TypeId:
+          type: string
+        stock:
+          type: number
+        warranty:
+          type: number
+        image:
+          type: url
+        pdDescribe:
+          type: string
+    brands:
+      type: object
+      properties:
+        brandId:
+          type: string
+        brandName:
+          type: string 
+        image:
+          type: url
+    types:
+      type: object
+      properties:
+        typeId:
+          type: string
+        typeName:
+          type: string
+    new_product:
+      type: object
+      properties:
+        pdName:
+          type: string
+        pdPrice:
+          type: number
+        brandId:
+          type: string
+        TypeId:
+          type: string
+        stock:
+          type: number
+        warranty:
+          type: number
+        image:
+          type: url
+        pdDescribe:
+          type: string
+    carts_dtl:
+      type: object
+      properties:
+        carId:
+          type: string
+        pdId:
+          type: string
+        qty:
+          type: number
+        unitPrice:
+          type: number
+        totalPrice:
+          type: number
+    carts:
+      type: object
+      properties:
+        carId:
+          type: string
+        cusId:
+          type: string
+        status:
+          type: number
+        sqty:
+          type: number
+        sprice:
+          type: number
+    members:
+      type: object
+      properties:
+        memEmail:
+          type: string
+        memName:
+          type: string
+        memSurname:
+          type: string
+        memAddress:
+          type: string
+        memTel:
+          type: number
+        birthDate:
+          type: DATE
+        dutyId:
+          type: string
+        password:
+          type: string
+    mem_getss:
+      type: object
+      properties:
+        memEmail:
+          type: string
+        memName:
+          type: string
+        dutyId:
+          type: string
+    loginMember:
+      type: object
+      properties:
+        memEmail:
+          type: string
+        memTel:
+          type: string
+        password:
+          type: string
+    orders:
+      type: object
+      properties:
+        orderId:
+          type: string
+        cusId:
+          type: string
+        memName:
+          type: string
+        memSurname:
+          type: string
+        status:
+          type: boolead
+        shipStatus:
+          type: string
+        shipAddress:
+          type: string
+        PaymentDate:
+          type: TIMESTAMP
+        price:
+          type: number
+    add_orders:
+      type: object
+      properties:
+        orderId:
+          type: string
+        status:
+          type: boolead
+    post_orders_dtl:
+      type: object
+      properties:
+        cartId:
+          type: string
+        orderId:
+          type: string
+    update_shipStatus:
+      type: object
+      properties:
+        orderId:
+          type: string
+        shipStatus:
+          type: string
+    admins:
+      type: object
+      properties:
+        adminEmail:
+          type: string
+        adminName:
+          type: string
+        adminSurname:
+          type: string
+        adminTel:
+          type: number
+        dutyId:
+          type: string
+        adminpassword:
+          type: string
+    admin_getss:
+      type: object
+      properties:
+        adminEmail:
+          type: string
+        adminName:
+          type: string
+        dutyId:
+          type: string
+    post_admins:
+      type: object
+      properties:
+        adminEmail:
+          type: string
+        adminName:
+          type: string
+        adminSurname:
+          type: string
+        adminTel:
+          type: number
+        dutyId:
+          type: string
+        adminpassword:
+          type: string
+    login_admins:
+      type: object
+      properties:
+        adminEmail:
+          type: string
+        adminTel:
+          type: number
+        adminpassword:
+          type: string
+
+
+
+
+
